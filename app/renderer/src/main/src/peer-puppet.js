@@ -22,6 +22,20 @@ async function getScreenStream() {
 }
 
 const pc = new window.RTCPeerConnection({})
+pc.ondatachannel = function (e) {
+  console.log('datachannel', e)
+  e.channel.onmessage = function (e) {
+    let { type, data } = JSON.parse(e.data)
+    if (type === 'mouse') {
+      data.screen = {
+        width: window.screen.width,
+        height: window.screen.height
+      }
+    }
+    ipcRenderer.send('robot', type, data)
+  }
+}
+
 // onicecandidate iceEvent
 pc.onicecandidate = function (e) {
   console.log('candidate', JSON.stringify(e.candidate))
@@ -35,6 +49,7 @@ ipcRenderer.on('candidate', (e, candidate) => {
 
 // addIceCandidate
 let candidates = []
+
 async function addIceCandidate(candidate) {
   if (candidate) candidates.push(candidate)
   if (pc.remoteDescription && pc.remoteDescription.type) {
@@ -44,6 +59,7 @@ async function addIceCandidate(candidate) {
     candidates = []
   }
 }
+
 ipcRenderer.on('offer', async (e, offer) => {
   let answer = await createAnswer(offer)
   ipcRenderer.send('forward', 'answer', {

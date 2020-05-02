@@ -15,6 +15,22 @@ const { ipcRenderer } = require('electron')
 // })
 
 const pc = new window.RTCPeerConnection({})
+const dc = pc.createDataChannel('robotcontrol', { reliable: false })
+dc.onopen = function () {
+  peer.on('robot', (type, data) => {
+    dc.send(JSON.stringify({
+      type,
+      data
+    }))
+  })
+}
+dc.onmessage = function (event) {
+  console.log('message', event)
+}
+dc.onerror = function (e) {
+  console.error('error', e)
+}
+
 // onicecandidate iceEvent
 pc.onicecandidate = function (e) {
   console.log('candidate', JSON.stringify(e.candidate))
@@ -49,9 +65,13 @@ async function createOffer() {
   return pc.localDescription
 }
 
-createOffer().then(offer => {
-  ipcRenderer.send('forward', 'offer', {type: offer.type, sdp: offer.sdp})
-})
+createOffer()
+  .then(offer => {
+    ipcRenderer.send('forward', 'offer', {
+      type: offer.type,
+      sdp: offer.sdp
+    })
+  })
 
 async function setRemote(answer) {
   await pc.setRemoteDescription(answer)
