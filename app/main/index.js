@@ -5,8 +5,9 @@ const handleIPC = require('./ipc')
 
 function createApp() {
   // 创建浏览器窗口
-  createControlWindow()
+  createMainWindow()
   handleIPC()
+  require('./robot')()
 }
 
 app.whenReady()
