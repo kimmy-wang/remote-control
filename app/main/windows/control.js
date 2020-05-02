@@ -2,6 +2,7 @@ const { BrowserWindow } = require('electron')
 const path = require('path')
 
 let win
+
 function create() {
   // 创建浏览器窗口
   win = new BrowserWindow({
@@ -20,4 +21,11 @@ function create() {
   return win
 }
 
-module.exports = {create}
+function send(channel, ...args) {
+  win.webContents.send(channel, ...args)
+}
+
+module.exports = {
+  create,
+  send
+}

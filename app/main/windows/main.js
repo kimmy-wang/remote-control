@@ -3,6 +3,7 @@ const isDev = require('electron-is-dev')
 const path = require('path')
 
 let win
+
 function create() {
   // 创建浏览器窗口
   win = new BrowserWindow({
@@ -25,4 +26,7 @@ function send(channel, ...args) {
   win.webContents.send(channel, ...args)
 }
 
-module.exports = { create, send }
+module.exports = {
+  create,
+  send
+}

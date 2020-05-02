@@ -22,6 +22,35 @@ async function getScreenStream() {
 }
 
 const pc = new window.RTCPeerConnection({})
+// onicecandidate iceEvent
+pc.onicecandidate = function (e) {
+  console.log('candidate', JSON.stringify(e.candidate))
+  if (e.candidate) {
+    ipcRenderer.send('forward', 'puppet-candidate', e.candidate)
+  }
+}
+ipcRenderer.on('candidate', (e, candidate) => {
+  addIceCandidate(candidate)
+})
+
+// addIceCandidate
+let candidates = []
+async function addIceCandidate(candidate) {
+  if (candidate) candidates.push(candidate)
+  if (pc.remoteDescription && pc.remoteDescription.type) {
+    for (let i = 0, length = candidates.length; i < length; i++) {
+      await pc.addIceCandidate(new RTCIceCandidate(candidates[i]))
+    }
+    candidates = []
+  }
+}
+ipcRenderer.on('offer', async (e, offer) => {
+  let answer = await createAnswer(offer)
+  ipcRenderer.send('forward', 'answer', {
+    type: answer.type,
+    sdp: answer.sdp
+  })
+})
 
 async function createAnswer(offer) {
   let screenStream = await getScreenStream()
@@ -32,4 +61,3 @@ async function createAnswer(offer) {
   console.log('answer', JSON.stringify(pc.localDescription))
   return pc.localDescription
 }
-window.createAnswer = createAnswer
