@@ -1,5 +1,5 @@
 {
-  "name": "remote-control",
+  "name": "Beacon",
   "version": "1.0.0",
   "description": "",
   "main": "app/main/index.js",
@@ -10,9 +10,17 @@
     "start:renderer": "cd app/renderer/src/main && npm run start"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": {
+    "name": "Ying Wang",
+    "email": "upcwangying@gmail.com",
+    "url": "https://github.com/upcwangying"
+  },
+  "bugs": {
+    "url": "https://github.com/upcwangying/remote-control/issues"
+  },
+  "license": "MIT",
   "dependencies": {
+    "about-window": "^1.13.2",
     "electron-is-dev": "^1.2.0",
     "robotjs": "^0.6.0",
     "ws": "^7.2.5"
