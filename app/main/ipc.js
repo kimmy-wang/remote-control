@@ -9,8 +9,8 @@ module.exports = function () {
     let { code } = await signal.invoke('login', null, 'logined')
     return code
   })
-  ipcMain.on('control', async (e, remoteCode) => {
-    signal.send('control', { remoteCode })
+  ipcMain.on('control', async (e, remote) => {
+    signal.send('control', { remote })
   })
 
   signal.on('controlled', data => {
